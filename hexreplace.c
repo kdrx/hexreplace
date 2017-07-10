@@ -1,3 +1,6 @@
+//for gcc
+#define _FILE_OFFSET_BITS 64
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +13,11 @@
  #else
   #pragma comment( linker, "/subsystem:console,5.01" )
  #endif
+ #define xftell _ftelli64
+ #define xfseek _fseeki64
+#else
+ #define xftell ftell
+ #define xfseek fseek
 #endif
 
 typedef unsigned char BYTE;
@@ -48,9 +56,9 @@ int readfile(const char *fname,BYTE **buf,size_t *size)
    printf("could not open file\n");
    return 2;
  }
- fseek(F, 0, SEEK_END);
- *size = ftell(F);
- fseek(F, 0, SEEK_SET);
+ xfseek(F, 0, SEEK_END);
+ *size = xftell(F);
+ xfseek(F, 0, SEEK_SET);
  printf("file size is %zu\n",*size);
  *buf = malloc(*size);
  if (!*buf)
